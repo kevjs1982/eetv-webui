@@ -1,0 +1,19 @@
+#EXTM3U
+#EXTINF:-1,CCTV News
+http://stream.arqiva.tv/cctv-news
+#EXTINF:-1,CCTV-4
+http://stream.arqiva.tv/cctv-4
+#EXTINF:-1,CCTV-9 Documentary
+http://stream.arqiva.tv/cctv-9
+#EXTINF:-1,RTД
+http://stream.arqiva.tv/rt-doc
+#EXTINF:-1,Motors TV
+http://stream.arqiva.tv/motorstv
+#EXTINF:-1,Vintage TV
+http://stream.arqiva.tv/vintagetv
+#EXTINF:-1,Kiss
+http://stream.arqiva.tv/boxtv-kiss
+#EXTINF:-1,Magic
+http://stream.arqiva.tv/boxtv-magic
+#EXTINF:-1,Kerrang!
+http://stream.arqiva.tv/boxtv-kerrang
