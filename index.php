@@ -176,7 +176,6 @@
 						//html += "<td><b>" + ent.seasonName + "</b><br>" + ent.seasonDescription + "</td>"
 						html += "</tr>";
 						
-						//console.log(ent);
 						if (typeof(ent.episodeInfo!='undefined'))
 						{
 							//html += ent.episodeInfo + "<br>";
@@ -238,6 +237,48 @@
 						html += "</table>";
 						$('#recording_contents').html(html);
 					});
+					break;
+				case 'timers':
+					
+					getEE(ee_url.timers,function(data)
+					{
+						var html = "<table>";
+						$.each(data, function( id, timer )
+						{
+							tmr = timer.param
+							$.each(tmr.instance, function( iid, inst )
+							{
+								var start = new Date(inst.startTime);
+								var end = new Date(inst.endTime);
+								
+								
+								html += "<tr>";
+								if (typeof(tmr.event.icon)  == 'undefined')
+								{
+									html += "<td>" + "X" + "</td>";
+								}
+								else
+								{
+									html += "<td>" + "<img height='25' src='"+tmr.event.icon +"'>" + "</td>";
+								}
+								
+								
+								html += "<td>" + tmr.event.name + "</td>";
+								html += "<td>" + tmr.event.channelName + "</td>";
+								html += "<td>" + tmr.event.text + "<br>" + tmr.event.episodeInfo + "</td>";
+								html += "<td>" + start.format('dd-mmm-yyyy HH:MM') + "</td>";
+								html += "<td>" + end.format('HH:MM')+ "</td>";
+								duration = (inst.endTime - inst.startTime) / 1000 ; 
+								html += "<td>" + $.number(duration / 60) + " mins</td>";
+								html += "</tr>";
+							});
+						});
+						html += "</table>";
+						$('#timer_contents').html(html);
+						
+						
+
+					});
 					break;				case 'channels':
 					getEE(ee_url.channels,function(data)
 					{
@@ -286,6 +327,7 @@
 		}
 		$(document).ready(function()
 		{
+			
 			getContent('config.js',init);
 			$( "#accordion" ).accordion(
 			{
@@ -300,6 +342,7 @@
 
 		function getContent(url,callback)
 		{
+			//alert("Retirned");
 			$.ajax({
 				url: url,
 				type: 'GET',
@@ -309,6 +352,7 @@
 				},
 				success: function(data, textStatus, xhr) 
 				{
+				//	alert("Success");
 					callback(data);
 				},
 				error: function(xhr, textStatus, errorThrown) {
@@ -318,19 +362,22 @@
 			});
 		}
 
-		function getEE(url,callback)
+		function getEE(url,callback,method)
 		{
-				
+			var method = (typeof(method) == 'undefined') ? 'json' : 'text';
 			$.ajax({
 				url: 'proxy.php?url=' + encodeURIComponent(ee_tv_box.addr) + encodeURIComponent(url),
 				type: 'GET',
-				dataType: 'json',
+				dataType: method,
 				beforeSend: function() {
 					//$('#'+id+' .contentarea').html('<img src="/function-demos/functions/ajax/images/loading.gif" />');
 				},
 				success: function(data, textStatus, xhr) 
 				{
-					callback(data);
+					if (callback!=false)
+					{
+						callback(data);
+					}
 				},
 				error: function(xhr, textStatus, errorThrown) {
 					//$('#'+id+' .contentarea').html(textStatus);
@@ -345,7 +392,36 @@
 		}
 		function press(button)
 		{
-			$.ajax( "remote.php?button="+button )
+			if (button == "vol_down")
+			{
+				getEE('/RemoteControl/Volume/get',function(reply)
+					{
+						level = reply.volume - 7;
+						if (level <0)
+						{
+							level = 0;
+						}	
+						getEE('/RemoteControl/Volume/set?volume='+level,false,'text');
+					});
+			}
+			else if(button == "vol_up")
+			{
+				getEE('/RemoteControl/Volume/get',function(reply)
+				{
+					level = reply.volume + 7;
+					if (level >100)
+					{
+						level = 100;
+					}
+					getEE('/RemoteControl/Volume/set?volume='+level,false,'text');
+				});
+			}
+			else
+			{
+				getEE('/RemoteControl/KeyHandling/sendKey?avoidLongPress=1&key='+button,false,'text');
+				//file_get_contents("{$ip_address}/RemoteControl/KeyHandling/sendKey?avoidLongPress=1&key={$button}");
+			}
+			//$.ajax( "remote.php?button="+button )
 		}
 
 		function eePlayRecording(recording)
@@ -379,13 +455,13 @@
 <div id="accordion">
     <h3 id="remote">Remote</h3>
     <div id="remote_contents"><p>
-      <a href="remote_control">Remote</a><br>
+      <img src="assetts/remote.jpg" usemap="remote_control">
     </p></div>
     <h3 id="channels">Channels</h3>
     <div id="channel_contents">
       <a href="channels">Channels</a><br>
     </div>
-    <h3 id="timer">Timer</h3>
+    <h3 id="timers">Timer</h3>
     <div id="timer_contents"><p>
 		<a href="timers">Timer</a><br>
     </p></div>
@@ -415,5 +491,41 @@
     </div>
 </div>
 
+<map id="remote_control" name="remote_control">
+	<area shape="circle" title="Power"  coords="137,41,12" href="javascript:press('power')"  >
+	<area shape="rect" title="2"  coords="65,92,106,115" href="javascript:press('2')"  >
+	<area shape="rect" title="1"  coords="14,92,56,117" href="javascript:press('1')"  >
+	<area shape="rect" title="3"  coords="116,92,154,115" href="javascript:press('3')"  >
+	<area shape="rect" title="4"  coords="14,126,56,148" href="javascript:press('4')"  >
+	<area shape="rect" title="5"  coords="66,126,105,148" href="javascript:press('5')"  >
+	<area shape="rect" title="6"  coords="116,126,154,148" href="javascript:press('6')"  >
+	<area shape="rect" title="7"  coords="14,158,56,179" href="javascript:press('7')"  >
+	<area shape="rect" title="8"  coords="65,158,102,179" href="javascript:press('8')"  >
+	<area shape="rect" title="9"  coords="114,158,153,179" href="javascript:press('9')"  >
+	<area shape="rect" title="Delete / Subtitle"  coords="14,191,56,213" href="javascript:press('delete')"  >
+	<area shape="rect" title="0"  coords="63,190,103,211" href="javascript:press('0')"  >
+	<area shape="rect" title="Text"  coords="114,191,153,209" href="javascript:press('text')"  >
+	<area shape="rect" title="Previous"  coords="19,234,56,260" href="javascript:press('prev')"  >
+	<area shape="rect" title="Play / Pause"  coords="57,234,110,260" href="javascript:press('play_pause')"  >
+	<area shape="rect" title="Next"  coords="111,234,153,260" href="javascript:press('next')"  >
+	<area shape="rect" title="Guide"  coords="17,415,79,435" href="javascript:press('guide')"  >
+	<area shape="rect" title="Record"  coords="93,415,155,435" href="javascript:press('rec')"  >
+	<area shape="rect" title="Back"  coords="20,365,58,393" href="javascript:press('back')"  >
+	<area shape="rect" title="Menu"  coords="60,365,115,393" href="javascript:press('menu')"  >
+	<area shape="rect" title="Info"  coords="114,365,157,393" href="javascript:press('info')"  >
+	<area shape="circle" title="Green"  coords="66,459,12" href="javascript:press('green')"  >
+	<area shape="circle" title="Yellow"  coords="107,459,12" href="javascript:press('yellow')"  >
+	<area shape="circle" title="Blue"  coords="146,459,12" href="javascript:press('blue')"  >
+	<area shape="circle" title="Red"  coords="26,459,12" href="javascript:press('red')"  >
+	<area shape="circle" title="OK"  coords="85,312,17" href="javascript:press('ok')"  >
+	<area shape="rect" title="Vol+"  coords="11,275,39,314" href="javascript:press('vol_up')"  >
+	<area shape="rect" title="Vol-"  coords="11,315,39,350" href="javascript:press('vol_down')"  >
+	<area shape="rect" title="Left"  coords="42,294,66,327" href="javascript:press('left')"  >
+	<area shape="rect" title="Down"  coords="66,328,104,358" href="javascript:press('down')"  >
+	<area shape="rect" title="Up"  coords="66,270,104,294" href="javascript:press('up')"  >
+	<area shape="rect" title="Right"  coords="104,294,130,327" href="javascript:press('right')"  >
+	<area shape="rect" title="Channel -"  coords="133,315,161,350" href="javascript:press('ch_down')"  >
+	<area shape="rect" title="Channel +"  coords="133,275,161,314" href="javascript:press('ch_up')"  >
+</map>
 </body>
 </html>
