@@ -106,6 +106,7 @@
 		function eeFindProgramme(name,chnumber)
 		{
 			name = $(name).val();
+			
 			chnumber = $(chnumber).val();
 			getEE(
 				ee_url.find_programme + encodeURIComponent(name) + "&zap=" + chnumber,
@@ -202,6 +203,10 @@
 		function init(reply)
 		{
 			ee_tv_box = reply;
+			$('#m3u').attr('href',ee_tv_box.addr + "/Live/Channels/getPlaylist");
+			$('#am3u').attr('href',"m3u.php?file=" + encodeURIComponent(ee_tv_box.addr + "/Live/Channels/getPlaylist"));
+			
+			
 			ee_url.channel_logo = ee_tv_box.addr + ee_url.channel_logo;
 			eeUpdateStatus();
 		}
@@ -229,8 +234,10 @@
 							html += "<td>" + rec.event.name + "</td>";
 							html += "<td>" + rec.event.channelName + "</td>";
 							html += "<td>" + rec.event.text + "<br>" + rec.event.episodeInfo + "</td>";
-							html += "<td onclick='eePlayRecording(\""+rec.id+"\")'>Play</td>";
-							html += "<td onclick='eeDownloadRecording(\""+rec.id+"\")'>Download</td>";
+							html += "<td onclick='eePlayRecording(\""+rec.id+"\")'>Play on EE TV</td>";
+							//html += "<td onclick='eeDownloadRecording(\""+rec.id+"\")'>Download</td>";
+							html += "<td><a href='download.php?addr="+encodeURIComponent(ee_tv_box.addr) +"&id=" + rec.id + "'>Download</a></td>";
+							html += "<td><a href='download.php?view&addr="+encodeURIComponent(ee_tv_box.addr) +"&id=" + rec.id + "'>View Locally</a></td>";
 							html += "<td>" + $.number(rec.duration / 60) + " mins</td>";
 							html += "</tr>";
 						}
@@ -248,6 +255,7 @@
 							tmr = timer.param
 							$.each(tmr.instance, function( iid, inst )
 							{
+	//console.log(inst);
 								var start = new Date(inst.startTime);
 								var end = new Date(inst.endTime);
 								
@@ -279,7 +287,8 @@
 						
 
 					});
-					break;				case 'channels':
+					break;
+				case 'channels':
 					getEE(ee_url.channels,function(data)
 					{
 						var html = "";
@@ -485,14 +494,14 @@
     <h3 id="playlists">Playlists</h3>
     <div id="playlist_contents">
 		<ul>
-			<li><a href="<?=$ip_address?>/Live/Channels/getPlaylist">M3U Playlist</a></li>
-			<li><a href="/assetts/arqiva.m3u">Arqiva Playlist</a></li>
+			<li><a href="#" id="m3u">EE TV Playlist</a> || <a id="am3u" href="m3u.php?file=assetts/arqiva.m3u">EE TV Playlist (Clickable)</a></li>
+			<li><a href="assetts/arqiva.m3u">Arqiva Playlist</a> || <a href="m3u.php?file=assetts/arqiva.m3u">Arqiva Playlist (Clickable)</a></li>
 		</ul>
     </div>
 </div>
 
 <map id="remote_control" name="remote_control">
-	<area shape="circle" title="Power"  coords="137,41,12" href="javascript:press('power')"  >
+	<area shape="circle" title="Power"  coords="137,41,12" href="javascript:press('on_off')"  >
 	<area shape="rect" title="2"  coords="65,92,106,115" href="javascript:press('2')"  >
 	<area shape="rect" title="1"  coords="14,92,56,117" href="javascript:press('1')"  >
 	<area shape="rect" title="3"  coords="116,92,154,115" href="javascript:press('3')"  >
