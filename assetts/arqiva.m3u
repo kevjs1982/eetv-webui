@@ -11,9 +11,25 @@ http://stream.arqiva.tv/rt-doc
 http://stream.arqiva.tv/motorstv
 #EXTINF:-1,Vintage TV
 http://stream.arqiva.tv/vintagetv
-#EXTINF:-1,Kiss
+#EXTINF:-1,Kiss (Encrypted)
 http://stream.arqiva.tv/boxtv-kiss
-#EXTINF:-1,Magic
+#EXTINF:-1,Magic (Encrypted)
 http://stream.arqiva.tv/boxtv-magic
-#EXTINF:-1,Kerrang!
+#EXTINF:-1,Kerrang! (Encrypted)
 http://stream.arqiva.tv/boxtv-kerrang
+#EXTINF:-1,QVC Extra
+http://stream.arqiva.tv/qvc-extra
+#EXTINF:-1,QVC Plus
+http://stream.arqiva.tv/qvc-plus
+#EXTINF:-1,QVC Style
+http://stream.arqiva.tv/qvc-style
+#EXTINF:-1,QVC Beauty
+http://stream.arqiva.tv/qvc-beau
+#EXTINF:-1,Racing UK (Preview)
+http://stream.arqiva.tv/racinguk
+#EXTINF:-1,Chatbox
+http://stream.arqiva.tv/chatbox
+#EXTINF:-1,Gay Network
+http://stream.arqiva.tv/gaynet
+#EXTINF:-1,SBN TV (Sonlife)
+http://stream.arqiva.tv/sbntvuk
