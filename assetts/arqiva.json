@@ -1,0 +1,19 @@
+[
+{"name":"CCTV News","zap":226,"url":"http://stream.arqiva.tv/cctv-news","logo":"cctvnews.png"},
+{"name":"CCTV-4","zap":false,"url":"http://stream.arqiva.tv/cctv-4","logo":"cctv4.png"},
+{"name":"CCTV-9 Documentary","zap":false,"url":"http://stream.arqiva.tv/cctv-9","logo":"cctv9.png"},
+{"name":"Chatbox","zap":false,"url":"http://stream.arqiva.tv/chatbox","logo":"chat_box.png"},
+{"name":"Gay Network","zap":false,"url":"http://stream.arqiva.tv/gaynet","logo":"gay_network.png"},
+{"name":"Kerrang!","zap":false,"url":"http://stream.arqiva.tv/boxtv-kerrang","encrypted":true,"logo":"kerrang.png"},
+{"name":"Kiss","zap":false,"url":"http://stream.arqiva.tv/boxtv-kiss","encrypted":true,"logo":"kiss.png"},
+{"name":"Magic","zap":false,"url":"http://stream.arqiva.tv/boxtv-magic","encrypted":true,"logo":"magic.png"},
+{"name":"Motors TV","zap":240,"url":"http://stream.arqiva.tv/motorstv","logo":"motors.png"},
+{"name":"QVC Beauty","zap":false,"url":"http://stream.arqiva.tv/qvc-beau","logo":"qvcb.png"},
+{"name":"QVC Extra","zap":false,"url":"http://stream.arqiva.tv/qvc-extra","logo":"qvce.png"},
+{"name":"QVC Plus","zap":false,"url":"http://stream.arqiva.tv/qvc-plus","logo":"qvcp.png"},
+{"name":"QVC Style","zap":false,"url":"http://stream.arqiva.tv/qvc-style","logo":"qvcs.png"},
+{"name":"Racing UK (Preview)","zap":231,"url":"http://stream.arqiva.tv/racinguk","logo":"racing.png"},
+{"name":"RTД","zap":false,"url":"http://stream.arqiva.tv/rt-doc","logo":"rtd.png"},
+{"name":"SBN TV (Sonlife)","zap":239,"url":"http://stream.arqiva.tv/sbntvuk","logo":"sbn.png"},
+{"name":"Vintage TV","zap":242,"url":"http://stream.arqiva.tv/vintagetv","logo":"vintagetv.png"}
+]
