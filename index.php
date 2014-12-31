@@ -16,8 +16,22 @@
 			margin:0px;
 			padding:3px;
 			position:absolute;
+			top:0px;
+			height:27px;
+			left:0px;
+			right:0px;
+			font-family:Roboto;
+			font-size:7pt;
+		}
+		
+		#channel_contents div.ch div.chcontrols
+		{
+			background-color:white;
+			margin:0px;
+			padding:3px;
+			position:absolute;
 			bottom:0px;
-			height:25px;
+			height:16px;
 			left:0px;
 			right:0px;
 			font-family:Roboto;
@@ -28,7 +42,7 @@
 			text-align:center;
 			left:0px;
 			position:absolute;
-			top:0px;
+			top:27px;
 			height:75px;
 			right:0px;
 		}
@@ -38,7 +52,7 @@
 			overflow:hidden;
 			position:relative;
 			width:100px;
-			height:77px;
+			height:97px;
 			border:1px solid black;
 			background-color:#ddd;
 			margin:3px;
@@ -85,10 +99,52 @@
 			'find_programme' : "/EPG/Programs/find?fieldName=name&fieldValue=", // &zap=
 			'play_video' : '/Live/External/play?position=0&url=',
 			'channel_logo' : '/Live/Channels/getLogo?zap=',
+			'cancel_timer' : '/EPG/Timers/delete?timerId='			
 			
 			};
 		var ee_tv_box = false;
+		var arqiva_channels = new Array;
+		var arqiva_connect_channels = new Array;
+		function compare(a,b) 
+		{
+			if (a.event.name < b.event.name)
+				return -1;
+			if (a.event.name > b.event.name)
+				return 1;
+			return 0;
+		}
 
+		function timersort(a,b) 
+		{
+			if (a.param.name < b.param.name)
+				return -1;
+			if (a.param.name > b.param.name)
+				return 1;
+			return 0;
+		}
+
+
+		function cancelTimer(timerId)
+		{
+			getEE(
+				ee_url.cancel_timer + timerId,
+				function(data)
+				{
+					showSection('timers');
+				},'text');
+		}
+		function setTimer(zap,startTime,series)
+		{
+			series = series == true ? 1 : 0;
+			url = '/EPG/Timers/recordEvent?zap='+zap+'&time='+startTime+'&isSeries='+series;
+			getEE(url,function(data)
+			{
+				showSection('timers');
+			},
+			'text'
+			);
+			
+		}
 		function eeUpdateStatus()
 		{
 			getEE(ee_url.info,function(data)
@@ -120,6 +176,7 @@
 					html += "<td>Show and Series</td>"
 					html += "<td>Channel and Times</td>"
 					html += "<td>Synopsis</td>"
+					html += "<td>Record</td>"
 					html += "</tr>";
 					// Group By Show then Series
 					var series = Array();
@@ -166,13 +223,21 @@
 						images += ent.subtitle == true ? '<img src="assetts/subtitles.png">' : '';
 						images += ent.audioDescription == true ? '<img src="assetts/ad.png">' : '';
 						html += "<tr>";
+						
+						
 						html += "<td>" + ent.id + "<br>" +ent.programCRID   +"<br>" +ent.serieId+ "</td>"
 						html += "<td class='image_type_"+ent.imageType+"'><img style='height:75px;' src='" + ee_tv_box.addr + ent.image + "'></td>"
 						html += "<td>" + ent.name + "<br>" + episodeInfo + "<br><i>"+ent.category+"</i>" + "</td>"
 						html += "<td><img height='25' src='"+ee_url.channel_logo+ent.channelZap +"'><br>" + start.format('dd-mmm-yyyy HH:MM') + " to " + end.format('HH:MM') + 
 							" ("+ dur +" minutes)</td>"
 						html += "<td class='desc'>" + ent.description + '<br>' + images + "</td>"
-						
+						html += "<td>";
+						html += "<a href='javascript:setTimer("+ent.channelZap+","+ent.startTime+",false);'><img src='assetts/rec.png' title='Record Once'></a>";
+						if (typeof(ent.serieId) != 'undefined')
+						{
+							html += " <a href='javascript:setTimer("+ent.channelZap+","+ent.startTime+",true);'><img src='assetts/recs.png' title='Record Series'></a>";
+						}
+						html += "</td>";
 						//html += "<td><b>" + ent.programName + "</b><br>" + ent.programDescription + "</td>"
 						//html += "<td><b>" + ent.seasonName + "</b><br>" + ent.seasonDescription + "</td>"
 						html += "</tr>";
@@ -190,6 +255,10 @@
 			
 		}
 		
+
+
+
+
 		function eePlayVideo(url_field)
 		{
 			var url = $(url_field).val();
@@ -211,6 +280,7 @@
 			eeUpdateStatus();
 		}
 		
+		
 		function showSection(section_id)
 		{
 			switch(section_id)
@@ -219,25 +289,40 @@
 					getEE(ee_url.recordings,function(data)
 					{
 						var html = "<table>";
+						html += "<colgroup><col style='width:77px;' /><col style='width:150px;' /><col style='width:120px;' /><col style='width:300px;' /></colgroup>";
+						html += "<tr class='ui-tabs-nav ui-helper-reset ui-widget-header ui-corner-all'>";
+						html += "<td>&nbsp;</td>"
+						html += "<td>Title</td>";
+						html += "<td>Channel</td>"
+						html += "<td>Episode</td>"
+						html += "<td>EE</td>"
+						html += "<td>D/L</td>"
+						html += "<td>VLC</td>"
+						html += "<td>Duration</td>"
+						html += "</tr>";
+						data.sort(compare);
 						for(i = 0;i<data.length;i++)
 						{
 							var rec = data[i];
 							html += "<tr>";
 							if (typeof(rec.event.icon)  == 'undefined')
 							{
-							html += "<td>" + "X" + "</td>";
+								html += "<td>" + "<img height='25' src='assetts/no.png'>" + "</td>";
 							}
 							else
 							{
-							html += "<td>" + "<img height='25' src='"+rec.event.icon +"'>" + "</td>";
+								html += "<td>" + "<img height='25' src='"+rec.event.icon +"'>" + "</td>";
 							}
+							
+							epInfo = typeof(rec.event.episodeInfo)  == 'undefined' ? '' : rec.event.episodeInfo;
+							
 							html += "<td>" + rec.event.name + "</td>";
 							html += "<td>" + rec.event.channelName + "</td>";
-							html += "<td>" + rec.event.text + "<br>" + rec.event.episodeInfo + "</td>";
-							html += "<td onclick='eePlayRecording(\""+rec.id+"\")'>Play on EE TV</td>";
+							html += "<td>" + rec.event.text + "<br>" + epInfo + "</td>";
+							html += "<td><a href='javascript:eePlayRecording(\""+rec.id+"\")'><img src='assetts/play_tv.png' title='Play on EE TV'></a></td>";
 							//html += "<td onclick='eeDownloadRecording(\""+rec.id+"\")'>Download</td>";
-							html += "<td><a href='download.php?addr="+encodeURIComponent(ee_tv_box.addr) +"&id=" + rec.id + "'>Download</a></td>";
-							html += "<td><a href='download.php?view&addr="+encodeURIComponent(ee_tv_box.addr) +"&id=" + rec.id + "'>View Locally</a></td>";
+							html += "<td><a href='download.php?addr="+encodeURIComponent(ee_tv_box.addr) +"&id=" + rec.id + "'><img src='assetts/download.png' title='Download'></a></td>";
+							html += "<td><a target='eetv' href='download.php?view&addr="+encodeURIComponent(ee_tv_box.addr) +"&id=" + rec.id + "'><img src='assetts/play.png' title='Play in New Window'></a></td>";
 							html += "<td>" + $.number(rec.duration / 60) + " mins</td>";
 							html += "</tr>";
 						}
@@ -256,6 +341,7 @@
 							$.each(tmr.instance, function( iid, inst )
 							{
 	//console.log(inst);
+	
 								var start = new Date(inst.startTime);
 								var end = new Date(inst.endTime);
 								
@@ -263,13 +349,14 @@
 								html += "<tr>";
 								if (typeof(tmr.event.icon)  == 'undefined')
 								{
-									html += "<td>" + "X" + "</td>";
+									html += "<td>" + "<img height='25' src='assetts/no.png'>" + "</td>";
 								}
 								else
 								{
 									html += "<td>" + "<img height='25' src='"+tmr.event.icon +"'>" + "</td>";
 								}
 								
+								var series = timer.param.repeat == 'series' ? true : false;
 								
 								html += "<td>" + tmr.event.name + "</td>";
 								html += "<td>" + tmr.event.channelName + "</td>";
@@ -278,6 +365,7 @@
 								html += "<td>" + end.format('HH:MM')+ "</td>";
 								duration = (inst.endTime - inst.startTime) / 1000 ; 
 								html += "<td>" + $.number(duration / 60) + " mins</td>";
+								html += "<td><a href='javascript:cancelTimer(" + id + ");'>Cancel"+ ( series == true ? ' Series Link ' : ' Timer'  )+"</a></td>";
 								html += "</tr>";
 							});
 						});
@@ -292,12 +380,40 @@
 					getEE(ee_url.channels,function(data)
 					{
 						var html = "";
+						var added_arqiva = false;
 						for(i = 0;i<data.length;i++)
 						{
 							var ch = data[i];
+							if (ch.zap >= 300 && added_arqiva == false)
+							{
+								added_arqiva = true;
+								for(i = 0;i<arqiva_connect_channels.length;i++)
+								{
+									var ch = arqiva_connect_channels[i];
+									html += "<div class='ch' >";
+									html += "<div class='chname'>"
+									html += ch.name ;
+									
+									html += "</div>"
+									html += "<div class='logo'><img style='max-width:100px;max-height:45px;' src='assetts/arqiva_connect/"+ch.logo +"'></div>";
+
+									html += "<div class='chcontrols'>"
+									html += "<a style='float:right' target='eetv' href='vlc.php?url="+encodeURIComponent(ch.url)+ "'><img src='assetts/play.png' title='Play in Browser'></a>";
+									
+									html += "</div>"
+									
+									html += "</div>";
+								}
+							}
+							
 							if(ch.hidden==false)
 							{
-								html += "<div class='ch' onclick='eeSwitchChannel(\""+ch.zap+"\")'>";
+								html += "<div class='ch' >";
+								html += "<div class='chname'>"
+								html += ch.zap + ". " + ch.name ;
+								arqiva_connect = (ch.zap >= 225 && ch.zap < 300) ? true : false;
+								
+								html += "</div>"
 								if (typeof(ch.logo)  == 'undefined')
 								{
 									html += "<div class='logo'><img width='100' src='"+ee_url.channel_logo+ch.zap +"'></div>";
@@ -306,12 +422,31 @@
 								}
 								else
 								{
-								html += "<div class='logo'><img width='100' src='"+ch.logo +"'></div>";
+									html += "<div class='logo'><img width='100' src='"+ch.logo +"'></div>";
 								}
-								html += "<div class='chname'>" + ch.zap + ". " + ch.name + "</div></div>";
+								html += "<div class='chcontrols'>"
+								html += "<a style='float:left' href='javascript:eeSwitchChannel(\""+ch.zap+"\")'><img src='assetts/play_tv.png' title='Play on EE TV'></a>";
+								if ( arqiva_connect == false)
+								{
+									html += "<a style='float:right' target='eetv' href='"+ee_tv_box.addr+"/Live/Channels/get?zap=" + ch.zap + "'><img src='assetts/play.png' title='Play in Browser'></a>";
+								}
+								else if(typeof(arqiva_channels[ch.zap]) != 'undefined')
+								{
+									html += "<a style='float:right' target='eetv' href='vlc.php?url="+encodeURIComponent(arqiva_channels[ch.zap])+ "'><img src='assetts/play.png' title='Play in Browser'></a>";
+								}
+								
+								html += "</div>"
+								
+								html += "</div>";
+								
+								
 							}
 
 						}
+						
+						
+						
+						
 						$('#channel_contents').html(html);
 					});
 					break;
@@ -338,6 +473,7 @@
 		{
 			
 			getContent('config.js',init);
+			getContent('assetts/arqiva.json',arqiva);
 			$( "#accordion" ).accordion(
 			{
 				beforeActivate: function(event, ui)
@@ -348,6 +484,26 @@
 			});
 		}); //$(document).ready(function(){
 
+		function arqiva(data)
+		{
+			var idx = 0;
+			for(i = 0;i<data.length;i++)
+			{
+				
+				if (data[i].zap != false)
+				{
+					//console.log(data[i]);
+					arqiva_channels[data[i].zap] = data[i].url;
+				}
+				else
+				{
+					if (data[i].encrypted != true)
+					{
+						arqiva_connect_channels[idx++] = data[i];
+					}
+				}
+			}
+		}
 
 		function getContent(url,callback)
 		{
@@ -475,7 +631,7 @@
 		<a href="timers">Timer</a><br>
     </p></div>
     <h3 id="recordings">Recordings</h3>
-    <div style="height:250px;" id="recording_contents"><p>
+    <div  id="recording_contents"><p>
       <a href="recordings">Recordings</a><br>
     </p></div>
 	<h3 id="search">Search</h3>
@@ -494,8 +650,8 @@
     <h3 id="playlists">Playlists</h3>
     <div id="playlist_contents">
 		<ul>
-			<li><a href="#" id="m3u">EE TV Playlist</a> || <a id="am3u" href="m3u.php?file=assetts/arqiva.m3u">EE TV Playlist (Clickable)</a></li>
-			<li><a href="assetts/arqiva.m3u">Arqiva Playlist</a> || <a href="m3u.php?file=assetts/arqiva.m3u">Arqiva Playlist (Clickable)</a></li>
+			<li><a id="am3u" href="#">EE TV Live Channels</a> .::. <a href="#" id="m3u">(M3U)</a> || </li>
+			<li><a href="m3u.php?file=assetts/arqiva.m3u">Arqiva Connect</a> .::. <a href="assetts/arqiva.m3u">(M3U)</a> || </li>
 		</ul>
     </div>
 </div>
