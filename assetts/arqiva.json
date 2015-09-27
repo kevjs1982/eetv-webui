@@ -15,5 +15,12 @@
 {"name":"Racing UK (Preview)","zap":231,"url":"http://stream.arqiva.tv/racinguk","logo":"racing.png"},
 {"name":"RTД","zap":false,"url":"http://stream.arqiva.tv/rt-doc","logo":"rtd.png"},
 {"name":"SBN TV (Sonlife)","zap":239,"url":"http://stream.arqiva.tv/sbntvuk","logo":"sbn.png"},
-{"name":"Vintage TV","zap":242,"url":"http://stream.arqiva.tv/vintagetv","logo":"vintagetv.png"}
+{"name":"Vintage TV","zap":242,"url":"http://stream.arqiva.tv/vintagetv","logo":"vintagetv.png"},
+{"name":"JSTV 1 (Promo)","zap":246,"url":"http://stream.arqiva.tv/vod/JSTV-1/jstv_promo_01.ts","logo":"jstv1.png"},
+{"name":"JSTV 2 (Promo)","zap":false,"url":"http://stream.arqiva.tv/vod/JSTV-2/jstv_promo_01.ts","logo":"jstv2.png"},
+{"name":"kykNET (Promo)","zap":247,"url":"http://stream.arqiva.tv/vod/KYKNET-MAIN/kykmain_promo_01.ts","logo":"kyknet.png"},
+{"name":"kykNET Musiek (Promo)","zap":false,"url":"http://stream.arqiva.tv/vod/KYKNET-MUZ/kykmuz_promo_01.ts","logo":"kyknetmusiek.png"},
+{"name":"abn","zap":252,"url":"http://stream.arqiva.tv/abntv","logo":"abn.png"},
+{"name":"Passion","zap":253,"url":"http://stream.arqiva.tv/passion","logo":"passion.png"},
+{"name":"Showcase","zap":254,"url":"http://stream.arqiva.tv/showcase","logo":"showcase.png"}
 ]
