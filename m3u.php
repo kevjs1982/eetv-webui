@@ -104,8 +104,14 @@ header('Content-Type: text/html; charset=utf-8');
 <ul><?
 $config = file_get_contents('config.js');
 $config = json_decode($config);
-
+if (substr($_GET['file'],0,7)!=='http://')
+{
 $f = file('http://'.$config->html_root."/".$_GET['file']);
+}
+else
+{
+$f = file($_GET['file']);
+}
 $label = false;
 foreach($f as $line)
 {
