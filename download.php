@@ -1,4 +1,5 @@
 <?
+set_time_limit(4*60*60); // four hours
 $session = json_decode(file_get_contents("{$_GET['addr']}/PVR/Records/session?recordId={$_GET['id']}"));
 $name = $session->event->name . " - " . $session->event->episodeInfo ." - " . $session->event->channelName;
 $name = preg_replace('/[^a-zA-Z0-9]/', '_', str_replace(" ","_",$name)) . ".ts";
