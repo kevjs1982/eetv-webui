@@ -1,8 +1,21 @@
 <!DOCTYPE html>
-<html lang="en-GB">
+<html lang="en-GB"  prefix="og: http://ogp.me/ns#">
 <head>
 	<meta charset="utf-8">
 	<title>EE TV Web Control</title>
+	<meta name="application-name" content="EE TV" />
+	<meta name="msapplication-starturl" content="http://<?=$_SERVER['SERVER_NAME']?>:<?=$_SERVER['SERVER_PORT']?><?=$_SERVER['REQUEST_URI']?>" />
+	<meta name="msapplication-navbutton-color" content="#009C9C" />
+	<meta name="msapplication-window" content="width=1024;height=768" />
+
+
+	<meta name="theme-color" content="#009C9C">
+	<meta property="og:title" content="EE TV Web Control" />
+	<meta property="og:description" content="Control and view programmes from the EE TV Box" />
+	<meta property="og:url" content="http://<?=$_SERVER['SERVER_NAME']?>:<?=$_SERVER['SERVER_PORT']?><?=$_SERVER['REQUEST_URI']?>" />
+	<meta property="og:image" content="http://<?=$_SERVER['SERVER_NAME']?>:<?=$_SERVER['SERVER_PORT']?><?=$_SERVER['REQUEST_URI']?>ee-icon-4x.png" />
+	<link rel="manifest" href="manifest.json">
+	<meta name="msapplication-config" content="live-tiles.xml.php?v=<?=date('YmdHis')?>" />
 	<style type="text/css">
 		body 
 		{
